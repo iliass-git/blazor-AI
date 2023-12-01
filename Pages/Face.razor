@@ -1,0 +1,43 @@
+@page "/facerecognition"
+@using BlazorAI.Services
+@inject FacerecognitionService facerecognitionService
+
+<h1>Face Recognition</h1>
+
+
+    <img class="img-display" src="@imageUrl" />
+    <div class="col">
+        <form @onsubmit="ProcessImage">
+            <InputFile OnChange="OnInputFileChange" />
+            <br /><br />
+            <button type="submit" class="btn btn-success">Start processing</button>
+        </form>
+    </div>
+
+@code {
+
+    private List<IBrowserFile> files = new List<IBrowserFile>();
+    string imageUrl;
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        files.Clear();
+        foreach (var file in e.GetMultipleFiles())
+        {
+            files.Add(file);
+        }
+        imageUrl = Path.Combine("media", files[0].Name);
+    }
+
+    private async Task ProcessImage()
+    {
+        foreach (var file in files)
+        {
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "media", file.Name);
+            var memoryStream = new MemoryStream();
+            await file.OpenReadStream().CopyToAsync(memoryStream);
+            await File.WriteAllBytesAsync(path, memoryStream.ToArray());
+            var fileName = await facerecognitionService.ProcessImageAsync(file.Name);
+            imageUrl = "/Media/"+fileName;;
+        }
+    }
+}
