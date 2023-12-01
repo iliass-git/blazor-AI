@@ -2,7 +2,7 @@ Blazor AI
 
 Simple Blazor application that allows users to upload images and extract relevant information using the **ClarifaiApi**.  
 
-![Alt text](image.png)  
+![Alt text](image-1.png)
 
 ## Tools
 * Blazor server
