@@ -68,3 +68,8 @@ a, .btn-link {
     height: 400px;
 
 }
+
+.result-badge{
+    margin: 3px;
+    padding: 4px;
+}

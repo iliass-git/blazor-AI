@@ -13,18 +13,16 @@
   <div class="row">
     <div class="col">
       <img class="img-display" src="@imageUrl" />
-    </div>
-    <div class="col">
-      <div>
+            <div>
             @if (imageDescriptions != null)
             {
                 <b>Result:</b><br>
-                 <ul>
-                    @foreach (var description in imageDescriptions)
-                    {   
-                        <li> @description </li>
-                    }
-                </ul> 
+         
+                @foreach (var description in imageDescriptions)
+                {   
+                    <a  class="btn btn-dark result-badge">@description</a> 
+                }
+      
             }
         </div>
     </div>
