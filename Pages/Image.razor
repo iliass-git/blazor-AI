@@ -1,13 +1,15 @@
-@page "/fileupload"
+@page "/image-processing"
 @using System.IO
+@using BlazorAI.Services
+@inject ImageprocessingService ImageprocessingService
 @inject IHttpClientFactory ClientFactory
 @using System.Text.Json
 @using System.Text.Json.Serialization
-@using BlazorAI.Data
+@using BlazorAI.Models
 @inject IWebHostEnvironment env
 @inject IConfiguration Configuration
 
-<h1>Blazor Image Recognition</h1>
+<h1>Blazor Image Processing</h1>
 
 <div class="container">
   <div class="row">
@@ -56,7 +58,7 @@
         imageUrl = Path.Combine("media", files[0].Name);
     }
 
-    private async Task UploadMedia()
+    private async Task UploadMedia(string imageUrl)
     {
         foreach (var file in files)
         {
@@ -67,40 +69,10 @@
             imageUrl = Path.Combine("media", file.Name);
         }
     }
-    private async Task<MediaModel> ProcessImage( )
+    private async Task<MediaModel> ProcessImage()
     {
-        await UploadMedia();
-        var clarfaiUri = "https://api.clarifai.com/v2/users/clarifai/apps/main/models/general-image-recognition/versions/aa7f35c01e0642fda5cf400f543e7c40/outputs";
-        var apiKey = Configuration.GetValue<string>("ClarifaiApiKey");
-        var client = ClientFactory.CreateClient();
-        client.DefaultRequestHeaders.Add("Authorization", $"Key {apiKey}");
-        client.DefaultRequestHeaders.Add("Accept", "application/json");
-        var imageBytes = await File.ReadAllBytesAsync(Path.Combine(env.WebRootPath, imageUrl));
-        var imageBase64 = Convert.ToBase64String(imageBytes);
-        var request = new
-        {
-            inputs = new[]
-            {
-                new
-                {
-                    data = new
-                    {
-                        image = new
-                        {
-                            base64 = imageBase64
-                        }
-                    }
-                }
-            }
-        };
-        var response = await client.PostAsJsonAsync(clarfaiUri, request);
-        var responseContent = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<MediaModel>(responseContent);
-
-        foreach (var item in result.outputs[0].data.concepts)
-        {
-            imageDescriptions.Add(item.name);
-        }
-        return result;
+        await UploadMedia(imageUrl);
+        imageDescriptions = await ImageprocessingService.GetImageTagsAsync(imageUrl);
+        return null;
     }
 }

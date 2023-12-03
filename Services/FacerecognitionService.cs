@@ -8,11 +8,10 @@ public class FacerecognitionService
 
     public async Task<string> ProcessImageAsync(string fileName)
     {
-
         var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "media");
         var imagePath = Path.Combine(path, fileName);
-        var img = System.Drawing.Image.FromFile(imagePath);
-        var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "Service", "haarcascade_frontalface_default.xml");
+        var img = Image.FromFile(imagePath);
+        var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "Cascades", "haarcascade_frontalface_default.xml");
         var faceCascade = new CascadeClassifier(modelPath);
         Image<Bgr, byte> image = new Image<Bgr, byte>(imagePath);
         Rectangle[] facesDetected = faceCascade.DetectMultiScale(image); 
