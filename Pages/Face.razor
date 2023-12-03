@@ -33,7 +33,7 @@
         {
             var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "media", file.Name);
             var memoryStream = new MemoryStream();
-            await file.OpenReadStream().CopyToAsync(memoryStream);
+            await file.OpenReadStream(5024000).CopyToAsync(memoryStream);
             await File.WriteAllBytesAsync(path, memoryStream.ToArray());
         }
         catch (Exception ex)
