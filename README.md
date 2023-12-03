@@ -2,7 +2,7 @@ Blazor AI
 
 Blazor AI is an application that empowers users to upload images, extract relevant information, and detect faces. It utilizes the **Emgu.CV** library and the **Clarifai API**.
 
-![Alt text](image-2.png)
+![Alt text](image-1.png)
 ![Alt text](image.png)
 
 ## Tools
