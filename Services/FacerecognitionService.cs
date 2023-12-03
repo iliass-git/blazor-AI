@@ -5,6 +5,11 @@ using Emgu.CV.Structure;
 namespace BlazorAI.Services;
 public class FacerecognitionService
 {
+    private readonly ILogger<FacerecognitionService> _logger;
+    public FacerecognitionService(ILogger<FacerecognitionService> logger)
+    {
+        _logger = logger;
+    }
 
     public async Task<string> ProcessImageAsync(string fileName)
     {

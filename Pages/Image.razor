@@ -8,6 +8,7 @@
 @using BlazorAI.Models
 @inject IWebHostEnvironment env
 @inject IConfiguration Configuration
+@inject ILogger<ImageprocessingService> Logger
 
 <h1>Blazor Image Processing</h1>
 
@@ -45,28 +46,31 @@
 
 @code {
     private string imageUrl;
-    private List<IBrowserFile> files = new List<IBrowserFile>();
+    private IBrowserFile file;
     private IList<string> imageDescriptions = new List<string>();
 
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
-        files.Clear();
-        foreach (var file in e.GetMultipleFiles())
-        {
-            files.Add(file);
+        file = e.File;
+        if (file != null){
+            imageUrl = Path.Combine("media", file.Name);
         }
-        imageUrl = Path.Combine("media", files[0].Name);
     }
 
     private async Task UploadMedia(string imageUrl)
     {
-        foreach (var file in files)
+        if (file != null)
         {
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "media", file.Name);
-            var memoryStream = new MemoryStream();
-            await file.OpenReadStream().CopyToAsync(memoryStream);
-            await File.WriteAllBytesAsync(path, memoryStream.ToArray());
-            imageUrl = Path.Combine("media", file.Name);
+            try{
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "media", file.Name);
+                var memoryStream = new MemoryStream();
+                await file.OpenReadStream().CopyToAsync(memoryStream);
+                await File.WriteAllBytesAsync(path, memoryStream.ToArray());
+                imageUrl = Path.Combine("media", file.Name);
+            }
+            catch(Exception ex){
+                Logger.LogError("File upload failed: ", ex.Message);
+            }
         }
     }
     private async Task<MediaModel> ProcessImage()
